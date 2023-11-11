@@ -35,6 +35,16 @@ export const TopBar = () => {
 
               <NavDropdown.Divider />
 
+              <NavDropdown.Item as={Link} to="/Login">
+                Log In
+              </NavDropdown.Item>
+              <NavDropdown.Divider />
+              <NavDropdown.Item as={Link} to="/Register">
+                Register
+              </NavDropdown.Item>
+
+              <NavDropdown.Divider />
+
               <NavDropdown.Item as={Link} to="/account">
                 Log Out
               </NavDropdown.Item>
