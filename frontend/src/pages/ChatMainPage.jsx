@@ -5,7 +5,7 @@ export const ChatMainPage = () => {
   return (
    <Container className='container'>
     <h3 className='text-center'>
-        Chat Main Page
+       Deb Chat
     </h3>
    </Container>
   )

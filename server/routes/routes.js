@@ -3,6 +3,8 @@ const User = require('../Models/user.model');
 const OtherModel = require('../Models/course.model');
 const router = express.Router();
 const bcrypt = require('bcrypt');
+const http = require('http');
+const socketIO = require('socket.io');
 
 // Assuming you have bodyParser middleware or express.json() middleware enabled
 router.use(express.json());
@@ -264,5 +266,7 @@ router.post('/validate', async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 });
+
+
 
 module.exports = router;
