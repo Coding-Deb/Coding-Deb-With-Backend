@@ -1,14 +1,36 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Container, Navbar, Nav, NavDropdown, Form, Row, Col, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { FaCode } from "react-icons/fa";
 
 import "../common.css";
 
-export const TopBar = () => {
+export const TopBar = ({checklog}) => {
   const imageStyle = {
     opacity: 0.7,
   };
+
+  const [username, setUsername] = useState('');
+  // const userId = '654f72890dc4edf61fc03d4a'; // Replace with the actual user ID after login
+
+  // useEffect(() => {
+  //   const fetchUsername = async () => {
+  //     try {
+  //       const response = await fetch(`/api/get_username/${userId}`);
+  //       const data = await response.json();
+
+  //       if (response.ok) {
+  //         setUsername(data.username);
+  //       } else {
+  //         console.error(data.message);
+  //       }
+  //     } catch (error) {
+  //       console.error('Error fetching username:', error);
+  //     }
+  //   };
+
+  //   fetchUsername();
+  // }, [userId]);
 
   return (
     <Navbar expand="lg" className="navbar">
@@ -19,14 +41,20 @@ export const TopBar = () => {
 
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
 
-        <Navbar.Collapse id="basic-navbar-nav">
+        {
+          checklog ? 
+          <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
             <Nav.Link as={Link} to="/courses">
               <h5>Courses</h5>
             </Nav.Link>
+            
 
             <Nav.Link as={Link} to="/about">
               <h5>About</h5>
+            </Nav.Link>
+            <Nav.Link as={Link} to="/chats">
+              <h5>Chat</h5>
             </Nav.Link>
             <NavDropdown title="More" id="basic-nav-dropdown">
               <NavDropdown.Item as={Link} to="/dashboard">
@@ -45,7 +73,7 @@ export const TopBar = () => {
 
               <NavDropdown.Divider />
 
-              <NavDropdown.Item as={Link} to="/account">
+              <NavDropdown.Item as={Link} to="/Logout">
                 Log Out
               </NavDropdown.Item>
             </NavDropdown>
@@ -67,7 +95,11 @@ export const TopBar = () => {
               </Col>
             </Row>
           </Form>
+          
         </Navbar.Collapse>
+      :
+      null  
+      }
       </Container>
     </Navbar>
   );

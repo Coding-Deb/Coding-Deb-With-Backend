@@ -16,10 +16,10 @@ export const CoursePage = () => {
 
   return (
     <Container fluid>
-      <Row xs={1} sm={2} md={3} lg={4} xl={5} className="g-4">
+      <Row xs={1} sm={2} md={3} lg={4} xl={5} className="g-5">
         {courses.map((item, index) => (
           <Col key={index} className="mb-4">
-            <Card style={{ width: "100%" }}>
+            <Card style={{ width: "100%" }} className="h-100">
               <Card.Body>
                 <Card.Title>{item.name}</Card.Title>
                 <Card.Subtitle className="mb-2 text-muted">
@@ -27,10 +27,13 @@ export const CoursePage = () => {
                 </Card.Subtitle>
                 <Card.Text>{item.description}</Card.Text>
                 <Card.Text>
-                  <h6> Code: </h6> {item.example_code}
+                  <h6>Code:</h6> {item.example_code}
                 </Card.Text>
                 <Button onClick={() => navigate(`/coursedetails/${item.name}`)}>
                   Enroll Here
+                </Button>
+                <Button onClick={() => navigate(`/course_entry/${item.name}`)}>
+                  Notes
                 </Button>
               </Card.Body>
             </Card>

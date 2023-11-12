@@ -1,5 +1,6 @@
 const express = require('express');
 const User = require('../Models/user.model');
+const OtherModel = require('../Models/course.model');
 const router = express.Router();
 const bcrypt = require('bcrypt');
 
@@ -14,7 +15,8 @@ const data = {
       "year_created": 1972,
       "paradigm": "Procedural",
       "example_code": "int main() {\n    printf(\"Hello, World!\");\n    return 0;\n}",
-      "website": "https://en.wikipedia.org/wiki/C_(programming_language)"
+      "website": "https://en.wikipedia.org/wiki/C_(programming_language)",
+      "Duration":"6 Month"
     },
     {
       "name": "C++",
@@ -22,7 +24,8 @@ const data = {
       "year_created": 1983,
       "paradigm": "Multi-paradigm (Procedural, Object-Oriented, Generic)",
       "example_code": "#include <iostream>\n\nint main() {\n    std::cout << \"Hello, World!\";\n    return 0;\n}",
-      "website": "https://en.wikipedia.org/wiki/C%2B%2B"
+      "website": "https://en.wikipedia.org/wiki/C%2B%2B",
+      "Duration":"6 Month"
     },
     {
       "name": "Python",
@@ -30,7 +33,8 @@ const data = {
       "year_created": 1991,
       "paradigm": "Multi-paradigm (Object-Oriented, Procedural, Functional)",
       "example_code": "print('Hello, World!')",
-      "website": "https://www.python.org/"
+      "website": "https://www.python.org/",
+      "Duration":"6 Month"
     },
     {
       "name": "java",
@@ -38,7 +42,8 @@ const data = {
       "year_created": 1995,
       "paradigm": "Object-Oriented",
       "example_code": "public class HelloWorld {\n    public static void main(String[] args) {\n        System.out.println(\"Hello, World!\");\n    }\n}",
-      "website": "https://www.java.com/"
+      "website": "https://www.java.com/",
+      "Duration":"6 Month"
     },
     {
       "name": "JavaScript",
@@ -46,7 +51,8 @@ const data = {
       "year_created": 1995,
       "paradigm": "Multi-paradigm (Event-Driven, Functional, Object-Oriented)",
       "example_code": "console.log('Hello, World!');",
-      "website": "https://developer.mozilla.org/en-US/docs/Web/JavaScript"
+      "website": "https://developer.mozilla.org/en-US/docs/Web/JavaScript",
+      "Duration":"6 Month"
     },
     {
       "name": "Ruby",
@@ -54,7 +60,8 @@ const data = {
       "year_created": 1995,
       "paradigm": "Object-Oriented",
       "example_code": "puts 'Hello, World!'",
-      "website": "https://www.ruby-lang.org/"
+      "website": "https://www.ruby-lang.org/",
+      "Duration":"6 Month"
     },
     {
       "name": "Go",
@@ -62,7 +69,8 @@ const data = {
       "year_created": 2009,
       "paradigm": "Concurrent, Imperative",
       "example_code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n    fmt.Println(\"Hello, World!\")\n}",
-      "website": "https://golang.org/"
+      "website": "https://golang.org/",
+      "Duration":"6 Month"
     },
     {
       "name": "Rust",
@@ -70,7 +78,8 @@ const data = {
       "year_created": 2010,
       "paradigm": "Multi-paradigm (Imperative, Functional)",
       "example_code": "fn main() {\n    println!(\"Hello, World!\");\n}",
-      "website": "https://www.rust-lang.org/"
+      "website": "https://www.rust-lang.org/",
+      "Duration":"6 Month"
     },
     {
       "name": "Swift",
@@ -78,7 +87,8 @@ const data = {
       "year_created": 2014,
       "paradigm": "Multi-paradigm (Protocol-Oriented, Object-Oriented)",
       "example_code": "import UIKit\n\nlet message = \"Hello, World!\"\n\nprint(message)",
-      "website": "https://developer.apple.com/swift/"
+      "website": "https://developer.apple.com/swift/",
+      "Duration":"6 Month"
     },
     {
       "name": "Kotlin",
@@ -86,7 +96,8 @@ const data = {
       "year_created": 2011,
       "paradigm": "Concise, Safe, Interoperable",
       "example_code": "fun main() {\n    println(\"Hello, World!\")\n}",
-      "website": "https://kotlinlang.org/"
+      "website": "https://kotlinlang.org/",
+      "Duration":"6 Month"
     }
   ]
 }
@@ -110,6 +121,7 @@ router.get('/details/:name', (req, res) => {
   }
 });
 
+
 router.post('/post_details', (req, res) => {
   const requestedName = req.body.name; // Assuming the client sends the name in the request body
 
@@ -129,6 +141,13 @@ router.post('/post_details', (req, res) => {
 router.post('/register', async (req, res) => {
   try {
     const { email, username, password, cpassword } = req.body;
+
+    const existingUser = await User.findOne({ username });
+
+    if (existingUser) {
+      console.log('Username already registered');
+      return res.status(400).json('Username already registered');
+    }
 
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -154,6 +173,38 @@ router.post('/register', async (req, res) => {
   }
 });
 
+router.get('/course_entry/:name', (req, res) => {
+  const languageName = req.params.name;
+  const language = data.programming_languages.find(lang => lang.name.toLowerCase() === languageName.toLowerCase());
+
+  if (language) {
+    res.send({ language }); // Send the entire language object
+  } else {
+    res.send({ msg: 'Language not found' });
+  }
+});
+
+router.post('/course_data_entry',async (req,res)=>{
+  
+  try {
+    // Assuming the request body contains the data for the new document
+    const { course, username } = req.body;
+
+    // Create a new instance of the OtherModel
+    const newOtherModel = new OtherModel({ course, username });
+
+    // Save the new document to the database
+    const savedData = await newOtherModel.save();
+
+    res.status(201).json(savedData);
+  }
+   catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' + error.message });
+  }
+
+})
+
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -177,6 +228,40 @@ router.post('/login', async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+router.get('/get_username/:id', async (req, res) => {
+  try {
+    const userId = req.params.id;
+
+    // Find the user by ID in the database
+    const user = await User.findById(userId);
+
+    if (user) {
+      res.json({ username: user.username });
+    } else {
+      res.status(404).json({ message: 'User not found' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+router.post('/validate', async (req, res) => {
+  try {
+    const { username, email, password } = req.body;
+    const user = await User.findOne({ $or: [{ username }, { email }] });
+
+    if (user && user.password === password) {
+      res.status(200).json({ message: 'User validated successfully' });
+    } else {
+      res.status(401).json({ message: 'Invalid credentials' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
   }
 });
 

@@ -1,31 +1,37 @@
-import React, { useState } from 'react';
-import {Link, useNavigate} from 'react-router-dom'
-import axios from 'axios';
-import { Container, Row, Col, Form, Button } from 'react-bootstrap';
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { Container, Row, Col, Form, Button } from "react-bootstrap";
 
+export const LoginPage = ({ onLogin }) => {
+  const navigate = useNavigate();
 
-export const LoginPage = ({onLogin}) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loginStatus, setLoginStatus] = useState("");
 
-  const navigate = useNavigate()
+  const handleSubmit = () => {
+    if (email !== "" && password !== "") {
+      axios
+        .post("/api/login", { email, password })
+        .then((response) => {
+          setLoginStatus(response.data.message)
+          navigate("/", { state: { loginStatus : response.data.message } });
 
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-  
-    const handleSubmit = () => {
-      axios.post('/api/login', { email, password })
-        .then(response => console.log(response.data))
-        .catch(error => console.error('Error:', error));
-      onLogin()
-      navigate('/')
-    };
+        })
+        .catch((error) => console.error("Error:", error));
+      onLogin();
+    } else {
+      navigate("/Login");
+    }
+  };
+
   return (
     <Container className="mt-5">
       <Row className="justify-content-md-center">
         <Col xs={12} md={6}>
-          <Form autoComplete='off'>
-            <h3>
-              Login Page
-            </h3>
+          <Form autoComplete="off">
+            <h3>Login Page</h3>
             <Form.Group controlId="formEmail">
               <Form.Label>Email</Form.Label>
               <Form.Control
@@ -39,22 +45,36 @@ export const LoginPage = ({onLogin}) => {
             <Form.Group controlId="formPassword">
               <Form.Label>Password</Form.Label>
               <Form.Control
-                type="text"
-                placeholder="Enter username"
+                type="password" // Change type to password
+                placeholder="Enter Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
             </Form.Group>
 
-            <Button variant="primary" onClick={handleSubmit}>
+            <Button
+              variant="primary"
+              onClick={handleSubmit}
+              style={{
+                marginTop: "10px",
+                width: "100%", // Make the button full width
+              }}
+            >
               Submit
             </Button>
           </Form>
-          <p style={{fontSize:15 , marginTop:'5px'}}>
-            Don't have account? <strong> <Link to='/Register' style={{textDecoration:"none"}}> Register Here </Link> </strong>
+          <p style={{ fontSize: 15, marginTop: "5px" }}>
+            Don't have an account?{" "}
+            <strong>
+              {" "}
+              <Link to="/Register" style={{ textDecoration: "none" }}>
+                {" "}
+                Register Here{" "}
+              </Link>{" "}
+            </strong>
           </p>
         </Col>
       </Row>
     </Container>
-  )
-}
+  );
+};
